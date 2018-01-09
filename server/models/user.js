@@ -21,6 +21,18 @@ var UserSchema = new mongoose.Schema({
       require: true,
       minlength: 6
     },
+    gold: {
+      type: Number,
+      required: true
+    },
+    food: {
+      type: Number,
+      required: true
+    },
+    lastFoodTick: {
+      type: Number,
+      required: true
+    },
     tokens: [{
       access: {
         type: String,
@@ -37,7 +49,7 @@ UserSchema.methods.toJSON = function () {
   var user = this;
   var userObject = user.toObject();
 
-  return _.pick(userObject, ['_id', 'email']);
+  return _.pick(userObject, ['_id', 'email', 'gold', 'food', 'lastFoodTick']);
 };
 
 UserSchema.methods.generateAuthToken = function () {

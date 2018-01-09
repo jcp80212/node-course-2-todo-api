@@ -7,13 +7,97 @@ const {ObjectID} = require('mongodb');
 
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
+var {Characters} = require('./models/characters');
 var {User} = require('./models/user');
+var {Skills} = require('./models/skills');
 var {authenticate} = require('./middleware/authenticate');
 
 var app = express();
 const port = process.env.PORT;
 
 app.use(bodyParser.json());
+
+app.put('/CreateCharacter', authenticate, (req, res) => {
+  var characters = new Characters( {
+    name: req.body.name,
+    level: req.body.level,
+    exp: req.body.exp,
+    endurance: req.body.endurance,
+    willpower: req.body.willpower,
+    strength: req.body.strength,
+    dexterity: req.body.dexterity,
+    wisdom: req.body.wisdom,
+    intelligence: req.body.intelligence,
+    speed: req.body.speed,
+    agility: req.body.agility,
+    constitution: req.body.constitution,
+    statPoints: req.body.statPoints,
+    needForNextLevel: req.body.needForNextLevel,
+    skillPoints: req.body.skillPoints,
+    maxHealthPoints: req.body.maxHealthPoints,
+    currentHealthPoints: req.body.currentHealthPoints,
+    maxFatiguePoints: req.body.maxFatiguePoints,
+    currentFatiguePoints: req.body.currentFatiguePoints,
+    _creator: req.user._id,
+    characterMadeAt: new Date().getTime()
+  });
+  console.log(characters);
+
+  characters.save().then((doc) => {
+    res.send(doc);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/Characters', authenticate, (req, res) => {
+  Characters.find({
+    _creator: req.user._id
+  }).then((characters) => {
+    res.send({characters});
+  }, (e) => {
+    console.log(e);
+    res.status(400).send(e);
+  });
+});
+
+app.get('/Characters/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+
+  if(!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Characters.findOne({
+    _id: id,
+    _creator: req.user._id
+  }).then((characters) => {
+    if(!characters) {
+      return res.status(404).send();
+    }
+    res.send({characters});
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+app.put('/Characters/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['name', 'level', 'exp', 'endurance', 'willpower', 'strength', 'dexterity', 'wisdom', 'intelligence', 'speed', 'agility', 'constitution', 'statPoints', 'needForNextLevel', 'skillPoints', 'maxHealthPoints', 'currentHealthPoints', 'maxFatiguePoints', 'currentFatiguePoints']);
+  if(!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+  //console.log(body);
+  Characters.findOneAndUpdate({_id: id, _creator: req.user._id}, {$set: body}, {new: true}).then((characters) => {
+    if(!characters) {
+      return res.status(404).send();
+    }
+
+    res.send({characters});
+  }).catch((e) => {
+    res.status(400).send();
+  })
+});
 
 app.post('/todos', authenticate, (req, res) => {
   var todo = new Todo( {
@@ -102,6 +186,23 @@ app.patch('/todos/:id', authenticate, (req, res) => {
   })
 });
 
+app.put('/updateUser', authenticate, (req, res) => {
+  var id = req.user._id;
+  var body = _.pick(req.body, ['gold', 'food', 'lastFoodTick']);
+  if(!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+  User.findOneAndUpdate({_id: id}, {$set: body}, {new: true}).then((user) => {
+    if(!user) {
+      return res.status(404).send();
+    }
+
+    res.send({user});
+  }).catch((e) => {
+    res.status(400).send();
+  })
+});
+
 app.post('/users', (req, res) => {
   var body = _.pick(req.body, ['email', 'password']);
   var user = new User(body)
@@ -116,7 +217,7 @@ app.post('/users', (req, res) => {
 });
 
 app.put('/users', (req, res) => {
-  var body = _.pick(req.body, ['email', 'password']);
+  var body = _.pick(req.body, ['email', 'password', 'gold', 'food', 'lastFoodTick']);
   var user = new User(body)
 
   user.save().then(() => {
