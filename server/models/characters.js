@@ -97,6 +97,10 @@ var Characters = mongoose.model('Characters', {
      required: true,
      minlength: 1
   },
+  nextRegenTick: {
+    type: Number,
+    minlength:1
+  },
   characterMadeAt: {
     type: Number,
     default: null
