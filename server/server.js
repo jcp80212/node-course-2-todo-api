@@ -38,6 +38,7 @@ app.put('/CreateCharacter', authenticate, (req, res) => {
     currentHealthPoints: req.body.currentHealthPoints,
     maxFatiguePoints: req.body.maxFatiguePoints,
     currentFatiguePoints: req.body.currentFatiguePoints,
+    nextRegenTick: req.body.nextRegenTick,
     _creator: req.user._id,
     characterMadeAt: new Date().getTime()
   });
