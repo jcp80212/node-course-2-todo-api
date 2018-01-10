@@ -83,7 +83,7 @@ app.get('/Characters/:id', authenticate, (req, res) => {
 
 app.put('/Characters/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  var body = _.pick(req.body, ['name', 'level', 'exp', 'endurance', 'willpower', 'strength', 'dexterity', 'wisdom', 'intelligence', 'speed', 'agility', 'constitution', 'statPoints', 'needForNextLevel', 'skillPoints', 'maxHealthPoints', 'currentHealthPoints', 'maxFatiguePoints', 'currentFatiguePoints']);
+  var body = _.pick(req.body, ['name', 'level', 'exp', 'endurance', 'willpower', 'strength', 'dexterity', 'wisdom', 'intelligence', 'speed', 'agility', 'constitution', 'statPoints', 'needForNextLevel', 'skillPoints', 'maxHealthPoints', 'currentHealthPoints', 'maxFatiguePoints', 'currentFatiguePoints', 'nextRegenTick']);
   if(!ObjectID.isValid(id)) {
     return res.status(404).send();
   }
