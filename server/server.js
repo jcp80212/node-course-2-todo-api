@@ -82,6 +82,53 @@ app.get('/Characters/:id', authenticate, (req, res) => {
   });
 });
 
+app.put('/CreateSkill/:id', authenticate, (req, res) => {
+  var skills = new Skills( {
+    _creator: req.params.id,
+    level: req.body.level,
+    currentExp: req.body.currentExp,
+    needForNextLevel: req.body.needForNextLevel,
+    difficultyMod: req.body.difficultyMod,
+    title: req.body.title
+  });
+  console.log(skills);
+
+  skills.save().then((doc) => {
+    res.send(doc);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/Skills/:id', authenticate, (req, res) => {
+  Skills.find({
+    _creator: req.params.id
+  }).then((skills) => {
+    res.send({skills});
+  }, (e) => {
+    console.log(e);
+    res.status(400).send(e);
+  });
+});
+
+app.put('/Skills/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['title','_creator', 'level', 'currentExp', 'needForNextLevel', 'difficultyMod']);
+  if(!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+  //console.log(body);
+  Skills.findOneAndUpdate({_id: id, _creator: req.body._creator}, {$set: body}, {new: true}).then((skills) => {
+    if(!skills) {
+      return res.status(404).send();
+    }
+
+    res.send({skills});
+  }).catch((e) => {
+    res.status(400).send();
+  })
+});
+
 app.put('/Characters/:id', authenticate, (req, res) => {
   var id = req.params.id;
   var body = _.pick(req.body, ['name', 'level', 'exp', 'endurance', 'willpower', 'strength', 'dexterity', 'wisdom', 'intelligence', 'speed', 'agility', 'constitution', 'statPoints', 'needForNextLevel', 'skillPoints', 'maxHealthPoints', 'currentHealthPoints', 'maxFatiguePoints', 'currentFatiguePoints', 'nextRegenTick']);

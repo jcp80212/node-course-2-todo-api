@@ -1,11 +1,23 @@
 var mongoose = require('mongoose');
 
-var Skill = mongoose.model('Skill', {
+var Skills = mongoose.model('Skills', {
+  title: {
+    type: String,
+    required: true
+  },
   level: {
     type: Number,
     required: true
   },
   currentExp: {
+    type: Number,
+    required: true
+  },
+  needForNextLevel: {
+    type: Number,
+    required: true
+  },
+  difficultyMod: {
     type: Number,
     required: true
   },
@@ -16,4 +28,4 @@ var Skill = mongoose.model('Skill', {
 });
 
 
-module.exports = {Skill};
+module.exports = {Skills};
