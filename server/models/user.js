@@ -33,6 +33,10 @@ var UserSchema = new mongoose.Schema({
       type: Number,
       required: true
     },
+    runes: {
+      type: Number,
+      required: true
+    },
     tokens: [{
       access: {
         type: String,

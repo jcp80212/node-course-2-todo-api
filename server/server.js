@@ -265,7 +265,7 @@ app.post('/users', (req, res) => {
 });
 
 app.put('/users', (req, res) => {
-  var body = _.pick(req.body, ['email', 'password', 'gold', 'food', 'lastFoodTick']);
+  var body = _.pick(req.body, ['email', 'password', 'gold', 'food', 'lastFoodTick', 'rune']);
   var user = new User(body)
 
   user.save().then(() => {
