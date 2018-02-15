@@ -236,7 +236,7 @@ app.patch('/todos/:id', authenticate, (req, res) => {
 
 app.put('/updateUser', authenticate, (req, res) => {
   var id = req.user._id;
-  var body = _.pick(req.body, ['gold', 'food', 'lastFoodTick']);
+  var body = _.pick(req.body, ['gold', 'food', 'lastFoodTick', 'runes']);
   if(!ObjectID.isValid(id)) {
     return res.status(404).send();
   }
